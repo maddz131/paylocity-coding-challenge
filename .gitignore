@@ -1,1 +1,4 @@
- BenefitsApi/BenefitsApi/obj/Debug/
+*.suo
+bin/
+obj/
+Debug/
