@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BenefitsApi.Dto;
+using BenefitsApi.Repositories;
+using BenefitsApi.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
@@ -9,32 +12,57 @@ namespace BenefitsApi.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        public EmployeeController(IConfiguration configuration)
+        private readonly IEmployeeRepository _employeeRepo;
+        private readonly BenefitsService _benefitsService;
+        public EmployeeController(IEmployeeRepository employeeRepo, BenefitsService benefitsService)
         {
-            _configuration = configuration;
+            _employeeRepo = employeeRepo;
+            _benefitsService = benefitsService;
         }
 
         [HttpGet]
-        public JsonResult Get()
+        public async Task<IActionResult> GetEmployees()
         {
-            string query = @"select FirstName from dbo.Employee";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("BenefitsAppCon");
-            SqlDataReader myReader;
-            using(SqlConnection myCon = new SqlConnection(sqlDataSource))
+            try
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
+                var employees = await _benefitsService.GetEmployees();
+                return Ok(employees);
             }
+            catch (Exception ex)
+            {
+                //log error
+                return StatusCode(500, ex.Message);
+            }
+        }
 
-            return new JsonResult(table);
+        [HttpPost]
+        public async Task<IActionResult> AddEmployee(EmployeeDto employee)
+        {
+            try
+            {
+                await _benefitsService.AddEmployee(employee);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                //log error
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            try
+            {
+                await _benefitsService.DeleteEmployee(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                //log error
+                return StatusCode(500, ex.Message);
+            }
         }
 
     }

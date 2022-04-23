@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "dXKVeVe3BJ8Rdtyzeaauhd0IQ0teS97dsgTxbpO7Rc8zB48I5OSIoGQOP9j3cNMCSPKvDLmZOx6BGTIrYJfSrA==",
+  "dgSpecHash": "8vcgkhOO3ojPwQg9iQJLwN0Iax/CTW+U4ZuOPgmRMJs28vOlP+wuSbFTLSlXLFdgZzSLjYjaTkrbyPkdDqNutA==",
   "success": true,
   "projectFilePath": "C:\\Users\\gotta\\Maddie\\paylocity-challenge\\BenefitsApi\\BenefitsApi\\BenefitsApi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\gotta\\.nuget\\packages\\dapper\\2.0.123\\dapper.2.0.123.nupkg.sha512",
     "C:\\Users\\gotta\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\6.0.4\\microsoft.aspnetcore.jsonpatch.6.0.4.nupkg.sha512",
     "C:\\Users\\gotta\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\6.0.4\\microsoft.aspnetcore.mvc.newtonsoftjson.6.0.4.nupkg.sha512",
     "C:\\Users\\gotta\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",

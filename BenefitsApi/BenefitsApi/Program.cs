@@ -1,3 +1,7 @@
+using BenefitsApi.Context;
+using BenefitsApi.Repositories;
+using BenefitsApi.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +13,17 @@ builder.Services.AddCors(c =>
 
 //JSON Serializer
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling=Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+builder.Services.AddSingleton<DapperContext>();
+
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+builder.Services.AddScoped<IDependentRepository, DependentRepository>();
+
+builder.Services.AddScoped<BenefitsService>();
+
+builder.Services.AddScoped<BenefitsApi.Models.Benefits>();//this should really be a setting or something prbly
+
 
 builder.Services.AddControllers();
 

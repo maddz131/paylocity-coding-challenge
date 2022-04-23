@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { variables } from './Variables';
 import * as Icon from "react-icons/bs";
 import {Button, CloseButton, Modal} from 'react-bootstrap'
+import ReactTooltip from "react-tooltip";
+
 
 export class Employees extends Component{
     constructor(props){
@@ -12,11 +14,11 @@ export class Employees extends Component{
             modalTitle:'',
             EmployeeFirstName:'',
             EmployeeLastName: '',
-            show: ''
+            showAddEmployee: ''
         }
     }
     //probaly would be able to add employee id but for sake of time, just generate one
-    componentDidMount(){//?
+    componentDidMount(){
         this.refreshList();
     }
 
@@ -27,71 +29,76 @@ export class Employees extends Component{
         this.setState({EmployeeLastName: e.target.value})
     }
 
-    handleClose = () => {
+    handleAddEmployeeClose = () => {
         this.setState({
-            show:false
+            showAddEmployee:false
         })
     }
-    handleShow = () => {
+    handleAddEmployeeShow = () => {
         this.setState({
-            show:true
+            showAddEmployee:true
         })
     }
 
-    addClick(){
-        console.log("Here")
+    addEmployeeClick = () => {
         this.setState({
             EmployeeFirstName: '',
             EmployeeLastName: '',
-            show: true
+            showAddEmployee: true
         });
     }
     
-    createClick = () => {
-        /*fetch(variables.API_URL + 'employees', {
+    refreshList = () => {
+        fetch(variables.API_URL + 'employee')
+        .then(response=>response.json())
+        .then(data=>{
+            console.log(data)
+            this.setState({employees:data})
+            console.log(this.state.employees)
+        });
+    }
+
+    createEmployeeClick = () => {
+        fetch(variables.API_URL + 'employee', {
             method:'POST',
             headers:{
                 'Accept': 'application/json',
-                'Content-Type':'appliction/json'
+                'Content-Type':'application/json'
             },
             body:JSON.stringify({
-                EmployeeFirstName:this.state.EmployeeFirstName,
-                EmployeeLastName:this.state.EmployeeLastName
+                'FirstName':this.state.EmployeeFirstName,
+                'LastName':this.state.EmployeeLastName
             })
         })
-        .then(response=>response.json())
         .then(data=>{
             alert("Employee Added!");
             this.refreshList();
-        });*/
-        
-        this.setState({employees: [
-            {
-                FirstName: this.state.EmployeeFirstName,
-                LastName: this.state.EmployeeLastName,
-                EmployeeId: 2
-            }
-        ]})
+        }).catch((error)=>{console.log(error)});
     }
-
-    refreshList(){
-        /*fetch(variables.API_URL + 'employees')
-        .then(response=>response.json())
-        .then(data=>{
-            this.setState({employees:data})
-        });*/
-        this.setState({employees: [
-            {
-                FirstName: 'Alec',
-                LastName: 'Blaire',
-                EmployeeId: 1
-            }
-        ]})
+    deleteEmployeeClick = (id) => {
+        if(window.confirm('Are you sure you want to delete this employee and their dependents?' +
+        ' This action cannot be udnone.'))
+        {
+            fetch(variables.API_URL + 'employee/' + id, {
+                method:'DELETE',
+                headers:{
+                    'Accept': 'application/json',
+                    'Content-Type':'application/json'
+                }
+            })
+            .then(()=> {
+                alert('Delete successful!')
+                this.refreshList();
+            })
+            .catch((error)=>{
+                alert('Delete Failed')
+            });
+        }
     }
+   
     render(){
         const {
             employees,
-            modalTitle,
             EmployeeFirstName,
             EmployeeLastName
         } = this.state;
@@ -100,32 +107,51 @@ export class Employees extends Component{
             <div>
                 <Button type='button'
                 className='btn btn-primary m-2 float-end'
-                onClick={this.handleShow}>
+                onClick={this.addEmployeeClick}>
                     Add Employee
                 </Button>
                 <table className='table table-striped'>
                     <thead>
                         <tr>
                             <th>
-                                EmployeeFirstName
+                                EmployeeId
                             </th>
                             <th>
-                                EmployeeLastName
+                                First Name
+                            </th>
+                            <th>
+                                Last Name
+                            </th>
+                            <th>
+                                Dependents
+                            </th>
+                            <th>
+                                Benefits Cost
+                            </th>
+                            <th>
+                                Discount
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         {employees.map(employee => 
-                            <tr key={employee.EmployeeId}>
-                                <td>{employee.FirstName}</td>
-                                <td>{employee.LastName}</td>
+                            <tr key={employee.employeeId}>
+                                <td>{employee.employeeId}</td>
+                                <td>{employee.firstName}</td>
+                                <td>{employee.lastName}</td>
+                                <td>{employee.dependents}</td>
+                                <td>{employee.benefitsCost}</td>
+                                <td>{employee.discount}</td>
+                                <td><Icon.BsPersonPlusFill/></td>
+                                <td><Icon.BsPencilSquare/></td>
+                                <td><Icon.BsTrash onClick={() => {this.deleteEmployeeClick(employee.employeeId)}}/></td>
                             </tr>
                             )}
                     </tbody>
                 </table>
             </div>
-            <Modal show={this.state.show}>
-                            <Modal.Header>Modal Head PArt
+            <Modal show={this.state.showAddEmployee}>
+                            <Modal.Header>Modal Head Part
                                 <CloseButton onClick={this.handleClose}/>
                             </Modal.Header>
                             <Modal.Body>
@@ -140,7 +166,7 @@ export class Employees extends Component{
                                 onChange={this.changeEmployeeLastName}/></span>
                             </Modal.Body>
                             <Modal.Footer>
-                                <Button onClick={()=> {this.handleClose(); this.createClick()}} >
+                                <Button onClick={()=> {this.handleAddEmployeeClose(); this.createEmployeeClick()}} >
                                     Add
                                 </Button>
                             </Modal.Footer>
