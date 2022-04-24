@@ -13,13 +13,14 @@ namespace BenefitsApi.Services
 
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IDependentRepository _dependentRepo;
+        private readonly IBenefitsRepository _benefitsRepo;
         private readonly Benefits _benefits;
 
-        public BenefitsService(IEmployeeRepository employeeRepo, IDependentRepository dependentRepository, Benefits benefits)
+        public BenefitsService(IEmployeeRepository employeeRepo, IDependentRepository dependentRepository, IBenefitsRepository benefitsRepository)
         {
             _employeeRepo = employeeRepo;
             _dependentRepo = dependentRepository;
-            _benefits = benefits;
+            _benefitsRepo = benefitsRepository;
         }
 
         private bool applyDiscount(string name)
@@ -31,19 +32,19 @@ namespace BenefitsApi.Services
             return false;
         }
 
-        private int calculateDiscount(string name, int cost)
+        private int calculateDiscount(string name, int cost, int percentDiscount)
         {
             if (applyDiscount(name))
             {
-                var multiplier = _benefits.percentDiscount / (double)100;
+                var multiplier = percentDiscount / (double)100;
                 return (int)(cost * multiplier);
             }
             return 0;
         }
 
-        private int getSalary() //might want to limit this to employees somehow
+        public async Task<Benefits> GetBenefitDetails()
         {
-            return _benefits.monthlyPay * _benefits.payCycles;
+            return await _benefitsRepo.GetDetails();
         }
 
         public async Task AddDependent(DependentDto dependentDto)
@@ -61,30 +62,29 @@ namespace BenefitsApi.Services
         public async Task<IEnumerable<Dependent>> GetDependentsByEmployeeId(int id)
         {
             var dependents = await _dependentRepo.GetByEmployeeId(id);
-            /*foreach (var dependent in dependents)
-            {
-                var hasDiscount = calculateDiscount(dependent.FirstName);
-                var finalCost = calculateFinalCost(_benefits.dependentCost, hasDiscount);
-                dependent.BenefitsCost = finalCost;
-                dependent.Discount = hasDiscount;
-            }*/
+            var benefits = await GetBenefitDetails();
+            foreach (var dependent in dependents){
+                dependent.Discount = calculateDiscount(dependent.FirstName, benefits.DependentBenefitsYearlyCost, benefits.PercentDiscount);
+            }
             return dependents;
-        }
 
-        public async Task<int> GetDependentCountByEmployeeId(int id)
-        {
-            return await _dependentRepo.GetCountByEmployeeId(id);
         }
-
         public async Task<IEnumerable<Employee>> GetEmployees()
         {
             var employees = await _employeeRepo.GetAll();
+            var benefits = await GetBenefitDetails();
             foreach (var employee in employees)
             {
-                employee.Salary = getSalary();
-                employee.Dependents = await GetDependentCountByEmployeeId(employee.EmployeeId);
-                employee.BenefitsCost = _benefits.employeeCost;
-                employee.Discount = calculateDiscount(employee.FirstName, _benefits.employeeCost);
+                var dependents = await GetDependentsByEmployeeId(employee.EmployeeId);
+                var dependentCount = dependents.Count();
+                var totalDependentDiscounts = dependents.Sum(dependent => calculateDiscount(dependent.FirstName, benefits.DependentBenefitsYearlyCost, benefits.PercentDiscount));
+                var employeeDiscount = calculateDiscount(employee.FirstName, benefits.EmployeeBenefitsYearlyCost, benefits.PercentDiscount);
+                var totalDiscounts = totalDependentDiscounts + employeeDiscount;
+                var totalCost = (dependentCount * benefits.DependentBenefitsYearlyCost) + benefits.EmployeeBenefitsYearlyCost - totalDiscounts;
+
+                employee.Dependents = dependents.Count();
+                employee.TotalDiscount = totalDiscounts;
+                employee.TotalCost = totalCost;
             }
             return employees;
         }

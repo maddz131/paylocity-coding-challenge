@@ -20,6 +20,8 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 builder.Services.AddScoped<IDependentRepository, DependentRepository>();
 
+builder.Services.AddScoped<IBenefitsRepository, BenefitsRepository>();
+
 builder.Services.AddScoped<BenefitsService>();
 
 builder.Services.AddScoped<BenefitsApi.Models.Benefits>();//this should really be a setting or something prbly

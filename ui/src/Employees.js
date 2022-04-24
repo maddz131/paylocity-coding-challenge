@@ -1,9 +1,7 @@
-import { tsContructorType } from '@babel/types';
 import React, { Component } from 'react';
 import { variables } from './Variables';
 import * as Icon from "react-icons/bs";
 import {Button, CloseButton, Modal} from 'react-bootstrap'
-import ReactTooltip from "react-tooltip";
 
 
 export class Employees extends Component{
@@ -206,7 +204,6 @@ export class Employees extends Component{
             dependents,
             EmployeeFirstName,
             EmployeeLastName,
-            EmployeeId,
             DependentFirstName,
             DependentLastName,
             DependentRelationship
@@ -219,7 +216,7 @@ export class Employees extends Component{
                 onClick={this.addEmployeeClick}>
                     Add Employee
                 </Button>
-                <table className='table table-striped'>
+                <table className='table'>
                     <thead>
                         <tr>
                             <th>
@@ -235,10 +232,10 @@ export class Employees extends Component{
                                 Dependents
                             </th>
                             <th>
-                                Benefits Cost
+                                Total Discounts
                             </th>
                             <th>
-                                Discount
+                                Total Cost
                             </th>
                         </tr>
                     </thead>
@@ -249,18 +246,22 @@ export class Employees extends Component{
                                 <td>{employee.firstName}</td>
                                 <td>{employee.lastName}</td>
                                 <td>{employee.dependents}</td>
-                                <td>{employee.benefitsCost}</td>
-                                <td>{employee.discount}</td>
-                                <td><Icon.BsPersonPlusFill onClick={() => {this.addDependentClick(employee.employeeId)}}/></td>
-                                <td><Icon.BsPeopleFill onClick = {()=>{this.viewDependentsClick(employee.employeeId); }}/></td>
-                                <td><Icon.BsTrash onClick={() => {this.deleteEmployeeClick(employee.employeeId)}}/></td>
+                                <td>${employee.totalDiscount}</td>
+                                <td>${employee.totalCost}</td>
+                                <td><Icon.BsPersonPlusFill 
+                                onClick={() => {this.addDependentClick(employee.employeeId)}}/></td>
+                                <td><Icon.BsPeopleFill
+                                onClick = {()=>{this.viewDependentsClick(employee.employeeId); }}/></td>
+                                <td><Icon.BsTrash
+                                onClick={() => {this.deleteEmployeeClick(employee.employeeId)}}/></td>
                             </tr>
                             )}
                     </tbody>
                 </table>
             </div>
             <Modal show={this.state.showAddEmployee}>
-                <Modal.Header>Add Employee
+                <Modal.Header>
+                    Add Employee
                     <CloseButton onClick={this.handleAddEmployeeClose}/>
                 </Modal.Header>
                 <Modal.Body>
@@ -278,13 +279,14 @@ export class Employees extends Component{
                     </span>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={()=> {this.handleAddEmployeeClose(); this.createEmployeeClick()}} >
+                    <Button onClick={()=> {this.handleAddEmployeeClose(); this.createEmployeeClick()}}>
                         Add
                     </Button>
                 </Modal.Footer>
             </Modal>
             <Modal show={this.state.showAddDependent}>
-                <Modal.Header>Add Dependent
+                <Modal.Header>
+                    Add Dependent
                     <CloseButton onClick={this.handleAddDependentClose}/>
                 </Modal.Header>
                 <Modal.Body>
@@ -302,7 +304,8 @@ export class Employees extends Component{
                     </span>
                     <span className='input-group-text'>
                         Relationship to Employee: 
-                        <select value={DependentRelationship} onChange={this.changeDependentRelationship}>
+                        <select value={DependentRelationship} 
+                        onChange={this.changeDependentRelationship}>
                             <option value="Spouse">Spouse</option>
                             <option value="Child">Child</option>
                         </select>
@@ -315,11 +318,12 @@ export class Employees extends Component{
                 </Modal.Footer>
             </Modal>
             <Modal show={this.state.showViewDependents}>
-                <Modal.Header>View Dependents
+                <Modal.Header>
+                    View Dependents
                     <CloseButton onClick={this.handleViewDependentsClose}/>
                 </Modal.Header>
                 <Modal.Body>
-                    <table className='table table-striped'>
+                    <table className='table'>
                         <thead>
                             <tr>
                                 <th>
@@ -346,7 +350,7 @@ export class Employees extends Component{
                                 <td>{dependent.firstName}</td>
                                 <td>{dependent.lastName}</td>
                                 <td>{dependent.relationship}</td>
-                                <td>{dependent.discount}</td>
+                                <td>${dependent.discount}</td>
                                 <td><Icon.BsTrash onClick={() => {this.deleteDependentClick(dependent.dependentId)}}/></td>
                             </tr>
                         )}

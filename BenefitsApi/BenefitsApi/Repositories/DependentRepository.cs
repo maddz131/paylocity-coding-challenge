@@ -33,14 +33,6 @@ namespace BenefitsApi.Repositories
                 return dependants.ToList();
             }
         }
-        public async Task<int> GetCountByEmployeeId(int id)
-        {
-            var query = "SELECT COUNT(DependentID) FROM dbo.Dependent WHERE EmployeeID = @id";
-            using (var connection = _context.CreateConnection())
-            {
-                return await connection.ExecuteScalarAsync<int>(query, new { id });
-            }
-        }
         public async Task Add(DependentDto dependentDto)
         {
             var query = "INSERT INTO dbo.Dependent " +

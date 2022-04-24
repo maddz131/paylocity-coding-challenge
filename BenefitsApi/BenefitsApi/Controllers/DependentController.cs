@@ -1,5 +1,4 @@
 ﻿using BenefitsApi.Dto;
-using BenefitsApi.Models;
 using BenefitsApi.Repositories;
 using BenefitsApi.Services;
 using Microsoft.AspNetCore.Mvc;

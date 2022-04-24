@@ -1,16 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BenefitsApi.Repositories;
+using BenefitsApi.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BenefitsApi.Controllers
 {
-    public class BenefitsController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BenefitsController : ControllerBase
     {
-        /*[HttpPost]
-        public async Task<IActionResult> ChangeDiscount()
+        private readonly IBenefitsRepository _benefitsRepo;
+        private readonly BenefitsService _benefitsService;
+        public BenefitsController(IBenefitsRepository benefitsRepository, BenefitsService benefitsService)
+        {
+            _benefitsRepo = benefitsRepository;
+            _benefitsService = benefitsService;
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetBenefitDetails()
         {
             try
             {
-                var addedDependent = await _benefitsService.Add(dependent);
-                return Ok(addedDependent);
+                var benefits = await _benefitsService.GetBenefitDetails(); //maybe don't need to go through service
+                return Ok(benefits);
             }
             catch (Exception ex)
             {
@@ -18,33 +31,5 @@ namespace BenefitsApi.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> ChangeEmployeeCost(int cost)
-        {
-            try
-            {
-                var addedDependent = await _benefitsService.Add(dependent);
-                return Ok(addedDependent);
-            }
-            catch (Exception ex)
-            {
-                //log error
-                return StatusCode(500, ex.Message);
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> ChangeDependentCost(int cost)
-        {
-            try
-            {
-                var addedDependent = await _benefitsService.Add(dependent);
-                return Ok(addedDependent);
-            }
-            catch (Exception ex)
-            {
-                //log error
-                return StatusCode(500, ex.Message);
-            }
-        }*/
     }
 }

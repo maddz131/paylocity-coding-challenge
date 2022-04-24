@@ -2,12 +2,12 @@
 {
     public class Benefits
     {
-        
-        public int employeeCost = 1000; //or 1000 depending on type
-        public int dependentCost = 500;
-        public int monthlyPay = 2000;
-        public int payCycles = 26;
-        public int percentDiscount = 10;
+
+        public int EmployeeBenefitsYearlyCost;
+        public int DependentBenefitsYearlyCost;
+        public int Paycheck;
+        public int PayPeriodsPerYear;
+        public int PercentDiscount;
         
     }
 }
