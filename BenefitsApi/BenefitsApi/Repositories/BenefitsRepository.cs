@@ -11,7 +11,6 @@ namespace BenefitsApi.Repositories
         {
             _context = context;
         }
-
         public async Task<Benefits> GetDetails()
         {
             var query = "SELECT * FROM dbo.BenefitsDetails";

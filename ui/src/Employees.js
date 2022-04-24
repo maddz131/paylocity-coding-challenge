@@ -197,6 +197,20 @@ export class Employees extends Component{
             });
         }
     }
+    totalDiscount = (employee) => {
+        let dependentsDiscount = 0;
+        if(employee.dependents.length > 0){
+            dependentsDiscount = employee.dependents.reduce((acc,curr) => {return acc+curr.discount}, dependentsDiscount)
+        }
+        return employee.discount + dependentsDiscount
+    }
+    totalCost = (employee) => {
+        let dependentsCost = 0
+        if(employee.dependents.length > 0){
+            dependentsCost = employee.dependents.reduce((acc,curr) => {return acc+curr.cost}, dependentsCost)
+        }
+        return (employee.cost + dependentsCost)
+    }
    
     render(){
         const {
@@ -232,10 +246,13 @@ export class Employees extends Component{
                                 Dependents
                             </th>
                             <th>
-                                Total Discounts
+                                Family Cost
                             </th>
                             <th>
-                                Total Cost
+                                Fanily Discounts
+                            </th>
+                            <th>
+                                Final Cost
                             </th>
                         </tr>
                     </thead>
@@ -245,9 +262,10 @@ export class Employees extends Component{
                                 <td>{employee.employeeId}</td>
                                 <td>{employee.firstName}</td>
                                 <td>{employee.lastName}</td>
-                                <td>{employee.dependents}</td>
-                                <td>${employee.totalDiscount}</td>
-                                <td>${employee.totalCost}</td>
+                                <td>{employee.dependents.length}</td>
+                                <td>${this.totalCost(employee)}</td>
+                                <td>${this.totalDiscount(employee)}</td>
+                                <td>${this.totalCost(employee)-this.totalDiscount(employee)}</td>
                                 <td><Icon.BsPersonPlusFill 
                                 onClick={() => {this.addDependentClick(employee.employeeId)}}/></td>
                                 <td><Icon.BsPeopleFill
@@ -272,7 +290,7 @@ export class Employees extends Component{
                         onChange={this.changeEmployeeFirstName}/>
                     </span>
                     <span className='input-group-text'>
-                        Last Name 
+                        <label class="col-sm-2 control-label">Last Name</label>
                         <input type='text' className='form-control'
                         value={EmployeeLastName}
                         onChange={this.changeEmployeeLastName}/>

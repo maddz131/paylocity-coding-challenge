@@ -10,26 +10,11 @@ namespace BenefitsApi.Controllers
     public class DependentController : ControllerBase
     {
         private readonly IDependentRepository _dependentRepo;
-        private readonly BenefitsService _benefitsService;
-        public DependentController(IDependentRepository dependentRepo, BenefitsService benefitsService)
+        private readonly IBenefitsService _benefitsService;
+        public DependentController(IDependentRepository dependentRepo, IBenefitsService benefitsService)
         {
             _dependentRepo = dependentRepo;
             _benefitsService = benefitsService;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetDependents()
-        {
-            try
-            {
-                var dependants = await _dependentRepo.GetAll();
-                return Ok(dependants);
-            }
-            catch (Exception ex)
-            {
-                //log error
-                return StatusCode(500, ex.Message);
-            }
         }
 
         [HttpGet("{id}")]
@@ -37,7 +22,7 @@ namespace BenefitsApi.Controllers
         {
             try
             {
-                var dependants = await _benefitsService.GetDependentsByEmployeeId(id);
+                var dependants = await _benefitsService.GetDependents(id);
                 return Ok(dependants);
             }
             catch (Exception ex)

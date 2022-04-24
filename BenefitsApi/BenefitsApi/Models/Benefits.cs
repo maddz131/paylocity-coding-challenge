@@ -3,11 +3,11 @@
     public class Benefits
     {
 
-        public int EmployeeBenefitsYearlyCost;
-        public int DependentBenefitsYearlyCost;
-        public int Paycheck;
-        public int PayPeriodsPerYear;
-        public int PercentDiscount;
-        
+        public int EmployeeBenefitsYearlyCost { get; set; }
+        public int DependentBenefitsYearlyCost { get; set; }
+        public int Paycheck { get; set; }
+        public int PayPeriodsPerYear { get; set; }
+        public int PercentDiscount { get; set; }
+        public int Salary => Paycheck * PayPeriodsPerYear;
     }
 }

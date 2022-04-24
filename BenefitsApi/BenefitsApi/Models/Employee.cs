@@ -5,10 +5,9 @@
         public int EmployeeId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
-        public int Dependents { get; set; }
-        public int TotalDiscount { get; set; }
-        public int TotalCost { get; set; }
+        public IEnumerable<Dependent> Dependents { get; set; }
+        public int Cost { get; set; }
+        public int Discount { get; set; } //should this be here or just be discount?
 
     }
 }

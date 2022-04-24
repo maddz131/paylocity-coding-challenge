@@ -13,8 +13,8 @@ namespace BenefitsApi.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeRepository _employeeRepo;
-        private readonly BenefitsService _benefitsService;
-        public EmployeeController(IEmployeeRepository employeeRepo, BenefitsService benefitsService)
+        private readonly IBenefitsService _benefitsService;
+        public EmployeeController(IEmployeeRepository employeeRepo, IBenefitsService benefitsService)
         {
             _employeeRepo = employeeRepo;
             _benefitsService = benefitsService;

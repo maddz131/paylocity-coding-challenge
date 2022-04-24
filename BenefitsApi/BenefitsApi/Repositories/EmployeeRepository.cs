@@ -23,7 +23,6 @@ namespace BenefitsApi.Repositories
                 return employees.ToList();
             }
         }
-
         public async Task Add(EmployeeDto employeeDto)
         {
             var query = "INSERT INTO dbo.Employee " +
@@ -38,20 +37,15 @@ namespace BenefitsApi.Repositories
                 await connection.ExecuteAsync(query, parameters);
             }
         }
-
         public async Task Delete(int id)
         {
-            var query = "Delete From dbo.Employee " +
-            "Where EmployeeID = @Id";
+            var query = "DELETE FROM dbo.Employee " +
+            "WHERE EmployeeID = @Id";
 
             using (var connection = _context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, new { Id = id });
             }
         }
-
-        /*public async Task<Employee> UpdateDependentCount(EmployeeDto employeeDto)
-        {
-        }*/
     }
 }

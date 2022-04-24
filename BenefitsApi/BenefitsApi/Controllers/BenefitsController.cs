@@ -9,8 +9,8 @@ namespace BenefitsApi.Controllers
     public class BenefitsController : ControllerBase
     {
         private readonly IBenefitsRepository _benefitsRepo;
-        private readonly BenefitsService _benefitsService;
-        public BenefitsController(IBenefitsRepository benefitsRepository, BenefitsService benefitsService)
+        private readonly IBenefitsService _benefitsService;
+        public BenefitsController(IBenefitsRepository benefitsRepository, IBenefitsService benefitsService)
         {
             _benefitsRepo = benefitsRepository;
             _benefitsService = benefitsService;

@@ -14,7 +14,6 @@ namespace BenefitsApi.Repositories
         {
             _context = context;
         }
-
         public async Task<IEnumerable<Dependent>> GetAll()
         {
             var query = "SELECT * FROM dbo.Dependent";
@@ -52,8 +51,8 @@ namespace BenefitsApi.Repositories
         }
         public async Task DeleteByEmployeeId(int id)
         {
-            var query = "Delete From dbo.Dependent " +
-            "Where EmployeeID = @Id";
+            var query = "DELETE FROM dbo.Dependent " +
+            "WHERE EmployeeID = @Id";
 
             using (var connection = _context.CreateConnection())
             {
@@ -62,8 +61,8 @@ namespace BenefitsApi.Repositories
         }
         public async Task Delete(int id)
         {
-            var query = "Delete From dbo.Dependent " +
-            "Where DependentID = @Id";
+            var query = "DELETE FROM dbo.Dependent " +
+            "WHERE DependentID = @Id";
 
             using (var connection = _context.CreateConnection())
             {
