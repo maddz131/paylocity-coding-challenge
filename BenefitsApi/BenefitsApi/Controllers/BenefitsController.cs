@@ -10,10 +10,11 @@ namespace BenefitsApi.Controllers
     {
         private readonly IBenefitsRepository _benefitsRepo;
         private readonly IBenefitsService _benefitsService;
-        public BenefitsController(IBenefitsRepository benefitsRepository, IBenefitsService benefitsService)
+
+        public BenefitsController(IBenefitsRepository benefitsRepo, IBenefitsService benefitsService)
         {
-            _benefitsRepo = benefitsRepository;
-            _benefitsService = benefitsService;
+            _benefitsRepo = benefitsRepo ?? throw new ArgumentNullException(nameof(benefitsRepo));
+            _benefitsService = benefitsService ?? throw new ArgumentNullException(nameof(benefitsService));
         }
 
 

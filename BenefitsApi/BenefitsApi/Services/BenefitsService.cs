@@ -15,11 +15,11 @@ namespace BenefitsApi.Services
         private readonly IDependentRepository _dependentRepo;
         private readonly IBenefitsRepository _benefitsRepo;
 
-        public BenefitsService(IEmployeeRepository employeeRepo, IDependentRepository dependentRepository, IBenefitsRepository benefitsRepository)
+        public BenefitsService(IEmployeeRepository employeeRepo, IDependentRepository dependentRepo, IBenefitsRepository benefitsRepo)
         {
-            _employeeRepo = employeeRepo;
-            _dependentRepo = dependentRepository;
-            _benefitsRepo = benefitsRepository;
+            _employeeRepo = employeeRepo ?? throw new ArgumentNullException(nameof(employeeRepo));
+            _dependentRepo = dependentRepo?? throw new ArgumentNullException(nameof(dependentRepo));
+            _benefitsRepo = benefitsRepo?? throw new ArgumentNullException(nameof(benefitsRepo));
         }
 
         private bool applyDiscount(string name)

@@ -14,10 +14,11 @@ namespace BenefitsApi.Controllers
     {
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IBenefitsService _benefitsService;
+
         public EmployeeController(IEmployeeRepository employeeRepo, IBenefitsService benefitsService)
         {
-            _employeeRepo = employeeRepo;
-            _benefitsService = benefitsService;
+            _employeeRepo = employeeRepo ?? throw new ArgumentNullException(nameof(employeeRepo));
+            _benefitsService = benefitsService ?? throw new ArgumentNullException(nameof(benefitsService));
         }
 
         [HttpGet]
