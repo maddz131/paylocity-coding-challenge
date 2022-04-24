@@ -58,10 +58,20 @@ namespace BenefitsApi.Repositories
                 await connection.ExecuteAsync(query, parameters);
             }
         }
-        public async Task Delete(int id)
+        public async Task DeleteByEmployeeId(int id)
         {
             var query = "Delete From dbo.Dependent " +
             "Where EmployeeID = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { Id = id });
+            }
+        }
+        public async Task Delete(int id)
+        {
+            var query = "Delete From dbo.Dependent " +
+            "Where DependentID = @Id";
 
             using (var connection = _context.CreateConnection())
             {

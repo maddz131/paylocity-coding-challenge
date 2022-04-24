@@ -62,14 +62,14 @@ namespace BenefitsApi.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-    /*
-        //[HttpGet]
-        public async Task<IActionResult> DeleteDependent(Dependent dependent)
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDependent(int id)
         {
             try
             {
-                var dependant = await _benefitsService.DeleteDependent(dependent);
-                return Ok(dependant);
+                await _benefitsService.DeleteDependent(id);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -77,7 +77,5 @@ namespace BenefitsApi.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-    
-    */
     }
 }

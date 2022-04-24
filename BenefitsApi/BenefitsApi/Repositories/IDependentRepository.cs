@@ -9,6 +9,8 @@ namespace BenefitsApi.Repositories
         public Task<IEnumerable<Dependent>> GetByEmployeeId(int id);
         public Task<int> GetCountByEmployeeId(int id);
         public Task Add(DependentDto dependentDto);
+
+        public Task DeleteByEmployeeId(int id);
         public Task Delete(int id);
     }
 }

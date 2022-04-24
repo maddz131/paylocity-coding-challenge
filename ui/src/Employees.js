@@ -11,10 +11,12 @@ export class Employees extends Component{
         super(props);
         this.state={
             employees:[],
+            dependents:[],
             EmployeeFirstName:'',
             EmployeeLastName: '',
             DependentFirstName:'',
             DependentLastName: '',
+            DependentRelationship: '',
             EmployeeId: '',
             showAddEmployee: '',
             showAddDependent: ''
@@ -39,6 +41,7 @@ export class Employees extends Component{
         this.setState({DependentLastName: e.target.value})
     }
     changeDependentRelationship = (e) =>{
+        console.log("Relationship Changed")
         this.setState({DependentRelationship: e.target.value})
     }
 
@@ -79,6 +82,17 @@ export class Employees extends Component{
             DependentRelationship: '',
             EmployeeId: employeeId,
             showAddDependent: true
+        });
+    }
+
+    handleViewDependentsShow = () => {
+        this.setState({
+            showViewDependents: true
+        });
+    }
+    handleViewDependentsClose = () => {
+        this.setState({
+            showViewDependents: false
         });
     }
     
@@ -151,11 +165,24 @@ export class Employees extends Component{
         }).catch((error)=>{console.log(error)});
     }
 
+    viewDependentsClick = (id) => {
+        this.setState({
+            EmployeeId:id
+        })
+        fetch(variables.API_URL + 'dependent/' + id)
+        .then(response=>response.json())
+        .then(data=>{
+            this.setState({dependents:data})
+            this.handleViewDependentsShow()
+            console.log(this.state.dependents)
+        });
+    }
+
     deleteDependentClick = (id) => {
-        if(window.confirm('Are you sure you want to delete this employee and their dependents?' +
+        if(window.confirm('Are you sure?' +
         ' This action cannot be udnone.'))
         {
-            fetch(variables.API_URL + 'employee/' + id, {
+            fetch(variables.API_URL + 'dependent/' + id, {
                 method:'DELETE',
                 headers:{
                     'Accept': 'application/json',
@@ -163,7 +190,8 @@ export class Employees extends Component{
                 }
             })
             .then(()=> {
-                alert('Delete successful!')
+                alert('Delete sucessful!')
+                this.viewDependentsClick(this.state.EmployeeId)
                 this.refreshList();
             })
             .catch((error)=>{
@@ -175,6 +203,7 @@ export class Employees extends Component{
     render(){
         const {
             employees,
+            dependents,
             EmployeeFirstName,
             EmployeeLastName,
             EmployeeId,
@@ -194,7 +223,7 @@ export class Employees extends Component{
                     <thead>
                         <tr>
                             <th>
-                                EmployeeId
+                                Id
                             </th>
                             <th>
                                 First Name
@@ -223,7 +252,7 @@ export class Employees extends Component{
                                 <td>{employee.benefitsCost}</td>
                                 <td>{employee.discount}</td>
                                 <td><Icon.BsPersonPlusFill onClick={() => {this.addDependentClick(employee.employeeId)}}/></td>
-                                <td><Icon.BsPencilSquare/></td>
+                                <td><Icon.BsPeopleFill onClick = {()=>{this.viewDependentsClick(employee.employeeId); }}/></td>
                                 <td><Icon.BsTrash onClick={() => {this.deleteEmployeeClick(employee.employeeId)}}/></td>
                             </tr>
                             )}
@@ -231,59 +260,101 @@ export class Employees extends Component{
                 </table>
             </div>
             <Modal show={this.state.showAddEmployee}>
-                            <Modal.Header>Add Employee
-                                <CloseButton onClick={this.handleAddEmployeeClose}/>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <span className='input-group-text'>
-                                    First Name 
-                                    <input type='text' className='form-control'
-                                    value={EmployeeFirstName}
-                                    onChange={this.changeEmployeeFirstName}/>
-                                </span>
-                                <span className='input-group-text'>
-                                    Last Name 
-                                    <input type='text' className='form-control'
-                                    value={EmployeeLastName}
-                                    onChange={this.changeEmployeeLastName}/>
-                                </span>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button onClick={()=> {this.handleAddEmployeeClose(); this.createEmployeeClick()}} >
-                                    Add
-                                </Button>
-                            </Modal.Footer>
+                <Modal.Header>Add Employee
+                    <CloseButton onClick={this.handleAddEmployeeClose}/>
+                </Modal.Header>
+                <Modal.Body>
+                    <span className='input-group-text'>
+                        First Name 
+                        <input type='text' className='form-control'
+                        value={EmployeeFirstName}
+                        onChange={this.changeEmployeeFirstName}/>
+                    </span>
+                    <span className='input-group-text'>
+                        Last Name 
+                        <input type='text' className='form-control'
+                        value={EmployeeLastName}
+                        onChange={this.changeEmployeeLastName}/>
+                    </span>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={()=> {this.handleAddEmployeeClose(); this.createEmployeeClick()}} >
+                        Add
+                    </Button>
+                </Modal.Footer>
             </Modal>
             <Modal show={this.state.showAddDependent}>
-                            <Modal.Header>Add Dependent
-                                <CloseButton onClick={this.handleAddDependentClose}/>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <span className='input-group-text'>
-                                    First Name 
-                                    <input type='text' className='form-control'
-                                    value={DependentFirstName}
-                                    onChange={this.changeDependentFirstName}/>
-                                </span>
-                                <span className='input-group-text'>
-                                    Last Name 
-                                    <input type='text' className='form-control'
-                                    value={DependentLastName}
-                                    onChange={this.changeDependentLastName}/>
-                                </span>
-                                <span className='input-group-text'>
-                                    Relationship to Employee: 
-                                    <select value={DependentRelationship} onChange={this.changeDependentRelationship}>
-                                        <option value="spouse">Spouse</option>
-                                        <option value="child">Child</option>
-                                    </select>
-                                </span>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button onClick={()=> {this.handleAddDependentClose(); this.createDependentClick()}} >
-                                    Add
-                                </Button>
-                            </Modal.Footer>
+                <Modal.Header>Add Dependent
+                    <CloseButton onClick={this.handleAddDependentClose}/>
+                </Modal.Header>
+                <Modal.Body>
+                    <span className='input-group-text'>
+                        First Name 
+                        <input type='text' className='form-control'
+                        value={DependentFirstName}
+                        onChange={this.changeDependentFirstName}/>
+                    </span>
+                    <span className='input-group-text'>
+                        Last Name 
+                        <input type='text' className='form-control'
+                        value={DependentLastName}
+                        onChange={this.changeDependentLastName}/>
+                    </span>
+                    <span className='input-group-text'>
+                        Relationship to Employee: 
+                        <select value={DependentRelationship} onChange={this.changeDependentRelationship}>
+                            <option value="Spouse">Spouse</option>
+                            <option value="Child">Child</option>
+                        </select>
+                    </span>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={()=> {this.handleAddDependentClose(); this.createDependentClick()}} >
+                        Add
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={this.state.showViewDependents}>
+                <Modal.Header>View Dependents
+                    <CloseButton onClick={this.handleViewDependentsClose}/>
+                </Modal.Header>
+                <Modal.Body>
+                    <table className='table table-striped'>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Id
+                                </th>
+                                <th>
+                                    First Name
+                                </th>
+                                <th>
+                                    Last Name
+                                </th> 
+                                <th>
+                                    Relationship
+                                </th>
+                                <th>
+                                    Discount
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {dependents.map(dependent => 
+                            <tr key={dependent.dependentId}>
+                                <td>{dependent.dependentId}</td>
+                                <td>{dependent.firstName}</td>
+                                <td>{dependent.lastName}</td>
+                                <td>{dependent.relationship}</td>
+                                <td>{dependent.discount}</td>
+                                <td><Icon.BsTrash onClick={() => {this.deleteDependentClick(dependent.dependentId)}}/></td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </Modal.Body>
+                <Modal.Footer>
+                </Modal.Footer>
             </Modal>
             
             </>

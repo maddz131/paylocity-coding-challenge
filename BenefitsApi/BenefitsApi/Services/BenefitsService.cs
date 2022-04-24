@@ -91,7 +91,7 @@ namespace BenefitsApi.Services
 
         public async Task DeleteEmployee(int id)
         {
-            await _dependentRepo.Delete(id);
+            await _dependentRepo.DeleteByEmployeeId(id);
             await _employeeRepo.Delete(id);
         }
         public async Task DeleteDependent(int id)
