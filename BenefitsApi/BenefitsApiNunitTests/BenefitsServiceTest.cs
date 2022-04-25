@@ -26,7 +26,7 @@ public class BenefitsServiceTests
     }
 
     [Test]
-    public async Task Get_Dependents()
+    public async Task Test_Get_Dependents()
     {
         //setup
         var dependent = new Dependent();
@@ -37,24 +37,24 @@ public class BenefitsServiceTests
         benefits.DependentBenefitsYearlyCost = 500;
         benefits.PercentDiscount = 10;
 
-        List<Dependent> dependents = new List<Dependent>() { dependent };
+        List<Dependent> dependents = new List<Dependent>(){dependent};
         _dependentRepo.GetByEmployeeId(Arg.Any<int>()).Returns(dependents);
         _benefitsRepo.GetDetails().Returns(benefits);
 
-        //check the method returns the list of dependents supplied by the repo
+        //check the method returns a list of dependents
         var result = await _benefitsService.GetDependents(dependent.EmployeeId);
         result.Should().BeEquivalentTo(dependents);
 
-        //check that discount wasn't applied
+        //check that discount wasn't applied and benefits cost was applied
         Assert.AreEqual(0, dependent.Discount);
+        Assert.AreEqual(500, dependent.BenefitsCost);
 
-        //check that the correct repositories were called
-        await _benefitsRepo.Received(1).GetDetails();
+        //check that the correct repository is called
         await _dependentRepo.Received(1).GetByEmployeeId(dependent.EmployeeId);
     }
 
     [Test]
-    public async Task Get_Dependents_Applies_Discount()
+    public async Task Test_Get_Dependents_Applies_Discount()
     {
         //setup
         var dependent = new Dependent();
@@ -65,13 +65,14 @@ public class BenefitsServiceTests
         benefits.DependentBenefitsYearlyCost = 500;
         benefits.PercentDiscount = 10;
 
-        List<Dependent> dependents = new List<Dependent>() { dependent };
+        List<Dependent> dependents = new List<Dependent>(){dependent};
         _dependentRepo.GetByEmployeeId(Arg.Any<int>()).Returns(dependents);
         _benefitsRepo.GetDetails().Returns(benefits);
 
         await _benefitsService.GetDependents(dependent.EmployeeId);
 
-        //check that discount was applied
+        //check that discount and benefits cost was applied
         Assert.AreEqual(50, dependent.Discount);
+        Assert.AreEqual(500, dependent.BenefitsCost);
     }
 }
