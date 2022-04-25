@@ -13,8 +13,8 @@ namespace BenefitsApi.Controllers
         private readonly IBenefitsService _benefitsService;
         public DependentController(IDependentRepository dependentRepo, IBenefitsService benefitsService)
         {
-            _dependentRepo = dependentRepo;
-            _benefitsService = benefitsService;
+            _dependentRepo = dependentRepo ?? throw new ArgumentNullException(nameof(dependentRepo));
+            _benefitsService = benefitsService ?? throw new ArgumentNullException(nameof(benefitsService));
         }
 
         [HttpGet("{id}")]
@@ -33,11 +33,11 @@ namespace BenefitsApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddDependent(DependentDto dependent)
+        public async Task<IActionResult> AddDependent(DependentDto dependentDto)
         {
             try
             {
-                await _benefitsService.AddDependent(dependent);
+                await _dependentRepo.Add(dependentDto);
                 return Ok();
             }
             catch (Exception ex)
@@ -52,7 +52,7 @@ namespace BenefitsApi.Controllers
         {
             try
             {
-                await _benefitsService.DeleteDependent(id);
+                await _dependentRepo.Delete(id);
                 return Ok();
             }
             catch (Exception ex)

@@ -10,12 +10,12 @@ namespace BenefitsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IBenefitsService _benefitsService;
 
-        public EmployeeController(IEmployeeRepository employeeRepo, IBenefitsService benefitsService)
+        public EmployeesController(IEmployeeRepository employeeRepo, IBenefitsService benefitsService)
         {
             _employeeRepo = employeeRepo ?? throw new ArgumentNullException(nameof(employeeRepo));
             _benefitsService = benefitsService ?? throw new ArgumentNullException(nameof(benefitsService));
@@ -37,11 +37,11 @@ namespace BenefitsApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEmployee(EmployeeDto employee)
+        public async Task<IActionResult> AddEmployee(EmployeeDto employeeDto)
         {
             try
             {
-                await _benefitsService.AddEmployee(employee);
+                await _employeeRepo.Add(employeeDto);
                 return Ok();
             }
             catch (Exception ex)

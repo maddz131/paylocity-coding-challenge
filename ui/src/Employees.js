@@ -3,7 +3,6 @@ import { variables } from './Variables';
 import * as Icon from "react-icons/bs";
 import {Button, CloseButton, Modal} from 'react-bootstrap'
 
-
 export class Employees extends Component{
     constructor(props){
         super(props);
@@ -31,7 +30,6 @@ export class Employees extends Component{
     changeEmployeeLastName = (e) =>{
         this.setState({EmployeeLastName: e.target.value})
     }
-
     changeDependentFirstName = (e) =>{
         this.setState({DependentFirstName: e.target.value})
     }
@@ -39,50 +37,18 @@ export class Employees extends Component{
         this.setState({DependentLastName: e.target.value})
     }
     changeDependentRelationship = (e) =>{
-        console.log("Relationship Changed")
         this.setState({DependentRelationship: e.target.value})
     }
-
     handleAddEmployeeClose = () => {
         this.setState({
             showAddEmployee:false
         })
     }
-    handleAddEmployeeShow = () => {
-        this.setState({
-            showAddEmployee:true
-        })
-    }
-
-    addEmployeeClick = () => {
-        this.setState({
-            EmployeeFirstName: '',
-            EmployeeLastName: '',
-            showAddEmployee: true
-        });
-    }
-
     handleAddDependentClose = () => {
         this.setState({
             showAddDependent:false
         })
     }
-    handleAddDependentShow = () => {
-        this.setState({
-            showAddDependent:true
-        })
-    }
-
-    addDependentClick = (employeeId) => {
-        this.setState({
-            DependentFirstName: '',
-            DependentLastName: '',
-            DependentRelationship: '',
-            EmployeeId: employeeId,
-            showAddDependent: true
-        });
-    }
-
     handleViewDependentsShow = () => {
         this.setState({
             showViewDependents: true
@@ -93,19 +59,24 @@ export class Employees extends Component{
             showViewDependents: false
         });
     }
-    
-    refreshList = () => {
-        fetch(variables.API_URL + 'employee')
-        .then(response=>response.json())
-        .then(data=>{
-            console.log(data)
-            this.setState({employees:data})
-            console.log(this.state.employees)
+    addEmployeeClick = () => {
+        this.setState({
+            EmployeeFirstName: '',
+            EmployeeLastName: '',
+            showAddEmployee: true
         });
     }
-
+    addDependentClick = (employeeId) => {
+        this.setState({
+            DependentFirstName: '',
+            DependentLastName: '',
+            DependentRelationship: '',
+            EmployeeId: employeeId,
+            showAddDependent: true
+        });
+    }
     createEmployeeClick = () => {
-        fetch(variables.API_URL + 'employee', {
+        fetch(variables.API_URL + 'employees', {
             method:'POST',
             headers:{
                 'Accept': 'application/json',
@@ -121,7 +92,6 @@ export class Employees extends Component{
             this.refreshList();
         }).catch((error)=>{console.log(error)});
     }
-
     deleteEmployeeClick = (id) => {
         if(window.confirm('Are you sure you want to delete this employee and their dependents?' +
         ' This action cannot be udnone.'))
@@ -142,7 +112,6 @@ export class Employees extends Component{
             });
         }
     }
-
     createDependentClick = () => {
         fetch(variables.API_URL + 'dependent', {
             method:'POST',
@@ -162,20 +131,6 @@ export class Employees extends Component{
             this.refreshList();
         }).catch((error)=>{console.log(error)});
     }
-
-    viewDependentsClick = (id) => {
-        this.setState({
-            EmployeeId:id
-        })
-        fetch(variables.API_URL + 'dependent/' + id)
-        .then(response=>response.json())
-        .then(data=>{
-            this.setState({dependents:data})
-            this.handleViewDependentsShow()
-            console.log(this.state.dependents)
-        });
-    }
-
     deleteDependentClick = (id) => {
         if(window.confirm('Are you sure?' +
         ' This action cannot be udnone.'))
@@ -197,6 +152,18 @@ export class Employees extends Component{
             });
         }
     }
+    viewDependentsClick = (id) => {
+        this.setState({
+            EmployeeId:id
+        })
+        fetch(variables.API_URL + 'dependent/' + id)
+        .then(response=>response.json())
+        .then(data=>{
+            this.setState({dependents:data})
+            this.handleViewDependentsShow()
+            console.log(this.state.dependents)
+        });
+    }
     totalDiscount = (employee) => {
         let dependentsDiscount = 0;
         if(employee.dependents.length > 0){
@@ -204,14 +171,24 @@ export class Employees extends Component{
         }
         return employee.discount + dependentsDiscount
     }
-    totalCost = (employee) => {
+    dependentsCost = (employee) => {
         let dependentsCost = 0
         if(employee.dependents.length > 0){
-            dependentsCost = employee.dependents.reduce((acc,curr) => {return acc+curr.cost}, dependentsCost)
+            dependentsCost = employee.dependents.reduce((acc,curr) => {return acc+curr.benefitsCost}, dependentsCost)
         }
-        return (employee.cost + dependentsCost)
+        return dependentsCost
     }
    
+    refreshList = () => {
+        fetch(variables.API_URL + 'employees')
+        .then(response=>response.json())
+        .then(data=>{
+            console.log(data)
+            this.setState({employees:data})
+            console.log(this.state.employees)
+        }).catch((error)=>{console.log(error)});
+    }
+
     render(){
         const {
             employees,
@@ -243,13 +220,13 @@ export class Employees extends Component{
                                 Last Name
                             </th>
                             <th>
-                                Dependents
+                                Employee Cost
                             </th>
                             <th>
-                                Family Cost
+                                Dependents Cost
                             </th>
                             <th>
-                                Fanily Discounts
+                                Total Discounts
                             </th>
                             <th>
                                 Final Cost
@@ -262,10 +239,10 @@ export class Employees extends Component{
                                 <td>{employee.employeeId}</td>
                                 <td>{employee.firstName}</td>
                                 <td>{employee.lastName}</td>
-                                <td>{employee.dependents.length}</td>
-                                <td>${this.totalCost(employee)}</td>
+                                <td>${employee.benefitsCost}</td>
+                                <td>${this.dependentsCost(employee)}</td>
                                 <td>${this.totalDiscount(employee)}</td>
-                                <td>${this.totalCost(employee)-this.totalDiscount(employee)}</td>
+                                <td>${this.dependentsCost(employee)+employee.benefitsCost-this.totalDiscount(employee)}</td>
                                 <td><Icon.BsPersonPlusFill 
                                 onClick={() => {this.addDependentClick(employee.employeeId)}}/></td>
                                 <td><Icon.BsPeopleFill
@@ -290,7 +267,7 @@ export class Employees extends Component{
                         onChange={this.changeEmployeeFirstName}/>
                     </span>
                     <span className='input-group-text'>
-                        <label class="col-sm-2 control-label">Last Name</label>
+                        Last Name
                         <input type='text' className='form-control'
                         value={EmployeeLastName}
                         onChange={this.changeEmployeeLastName}/>
@@ -324,6 +301,7 @@ export class Employees extends Component{
                         Relationship to Employee: 
                         <select value={DependentRelationship} 
                         onChange={this.changeDependentRelationship}>
+                            <option value="default"></option>
                             <option value="Spouse">Spouse</option>
                             <option value="Child">Child</option>
                         </select>
@@ -357,6 +335,9 @@ export class Employees extends Component{
                                     Relationship
                                 </th>
                                 <th>
+                                    Cost
+                                </th>
+                                <th>
                                     Discount
                                 </th>
                             </tr>
@@ -368,6 +349,7 @@ export class Employees extends Component{
                                 <td>{dependent.firstName}</td>
                                 <td>{dependent.lastName}</td>
                                 <td>{dependent.relationship}</td>
+                                <td>${dependent.benefitsCost}</td>
                                 <td>${dependent.discount}</td>
                                 <td><Icon.BsTrash onClick={() => {this.deleteDependentClick(dependent.dependentId)}}/></td>
                             </tr>

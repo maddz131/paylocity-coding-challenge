@@ -42,20 +42,20 @@ namespace BenefitsApi.Services
         public async Task<IEnumerable<Dependent>> GetDependents(int id)
         {
             var dependents = await _dependentRepo.GetByEmployeeId(id);
-            var benefits = await GetBenefitDetails();
+            var benefits = await _benefitsRepo.GetDetails();
             foreach (var dependent in dependents){
+                dependent.BenefitsCost = benefits.DependentBenefitsYearlyCost;
                 dependent.Discount = calculateDiscount(dependent.FirstName, benefits.DependentBenefitsYearlyCost, benefits.PercentDiscount);
-                dependent.Cost = benefits.DependentBenefitsYearlyCost;
             }
             return dependents;
         }
         public async Task<IEnumerable<Employee>> GetEmployees()
         {
             var employees = await _employeeRepo.GetAll();
-            var benefits = await GetBenefitDetails();
+            var benefits = await _benefitsRepo.GetDetails();
             foreach (var employee in employees)
             {
-                employee.Cost = benefits.EmployeeBenefitsYearlyCost;
+                employee.BenefitsCost = benefits.EmployeeBenefitsYearlyCost;
                 employee.Dependents = await GetDependents(employee.EmployeeId);
                 employee.Discount = calculateDiscount(employee.FirstName, benefits.EmployeeBenefitsYearlyCost, benefits.PercentDiscount);
             }
@@ -65,22 +65,6 @@ namespace BenefitsApi.Services
         {
             await _dependentRepo.DeleteByEmployeeId(id);
             await _employeeRepo.Delete(id);
-        }
-        public async Task DeleteDependent(int id)
-        {
-            await _dependentRepo.Delete(id);
-        }
-        public async Task AddEmployee(EmployeeDto employeeDto)
-        {
-            await _employeeRepo.Add(employeeDto);
-        }
-        public async Task AddDependent(DependentDto dependentDto)
-        {
-            await _dependentRepo.Add(dependentDto);
-        }
-        public async Task<Benefits> GetBenefitDetails()
-        {
-            return await _benefitsRepo.GetDetails();
         }
     }
 }

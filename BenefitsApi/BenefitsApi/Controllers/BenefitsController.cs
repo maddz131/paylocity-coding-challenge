@@ -17,13 +17,12 @@ namespace BenefitsApi.Controllers
             _benefitsService = benefitsService ?? throw new ArgumentNullException(nameof(benefitsService));
         }
 
-
         [HttpGet]
         public async Task<IActionResult> GetBenefitDetails()
         {
             try
             {
-                var benefits = await _benefitsService.GetBenefitDetails(); //maybe don't need to go through service
+                var benefits = await _benefitsRepo.GetDetails();
                 return Ok(benefits);
             }
             catch (Exception ex)
